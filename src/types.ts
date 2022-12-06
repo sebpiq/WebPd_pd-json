@@ -10,6 +10,9 @@
  */
 
 export declare module PdJson {
+    // Pd file
+    type PdString = string
+
     // In Pd some objects use a global namespace shared across all patches.
     // This is the case for example of arrays.
     type ObjectGlobalId = string
