@@ -1,0 +1,3 @@
+node_modules
+dist
+tsconfig-generated-for-rollup.json
