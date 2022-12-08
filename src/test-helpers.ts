@@ -9,7 +9,9 @@
  *
  */
 
-import { PdJson } from "./types"
+import { DspGraph } from "@webpd/dsp-graph"
+import { ConversionData } from "./to-dsp-graph"
+import { NodeBuilder, NodeBuilders, PdJson } from "./types"
 
 type ConcisePdConnection = [
     PdJson.ObjectLocalId,
@@ -22,7 +24,19 @@ type ConcisePatch = Partial<Omit<PdJson.Patch, 'connections'>> & {
     nodes: { [localId: string]: PdJson.Node }
     connections: Array<ConcisePdConnection>
 }
+
 type ConcisePd = { patches: { [patchId: string]: ConcisePatch } }
+
+type ConciseNodeBuilders = {
+    [nodeType: string]: {
+        inletTypes?: Array<DspGraph.PortletType>
+        outletTypes?: Array<DspGraph.PortletType>
+        isEndSink?: boolean
+        translateArgs?: NodeBuilder<any>['translateArgs']
+        rerouteConnectionIn?: NodeBuilder<any>['rerouteConnectionIn']
+        build?: NodeBuilder<any>['build']
+    }
+}
 
 export const pdJsonDefaults = (): PdJson.Pd => ({
     patches: {},
@@ -71,4 +85,68 @@ export const makePd = (concisePd: ConcisePd): PdJson.Pd => {
         }
     })
     return pd
+}
+
+// Necessary because `ConversionData.graph` is readonly
+export const setConversionDataGraph = (
+    conversion: ConversionData,
+    graph: DspGraph.Graph
+) => {
+    Object.keys(conversion.graph).forEach(
+        (key) => delete conversion.graph[key]
+    )
+    Object.keys(graph).forEach((key) => (conversion.graph[key] = graph[key]))
+}
+
+export const makeNodeBuilders = (
+    conciseNodeBuilders: ConciseNodeBuilders
+): NodeBuilders => {
+    const nodeBuilders: NodeBuilders = {}
+    Object.entries(conciseNodeBuilders).forEach(([nodeType, entryParams]) => {
+        let build: NodeBuilder<any>['build']
+        if (!entryParams.build) {
+            const defaultPortletsTemplate: Array<DspGraph.PortletType> = [
+                'message',
+            ]
+
+            const inletsTemplate: DspGraph.PortletMap = {}
+            ;(entryParams.inletTypes || defaultPortletsTemplate).map(
+                (inletType, i) => {
+                    inletsTemplate[`${i}`] = {
+                        type: inletType,
+                        id: i.toString(10),
+                    }
+                }
+            )
+
+            const outletsTemplate: DspGraph.PortletMap = {}
+            ;(entryParams.outletTypes || defaultPortletsTemplate).map(
+                (outletType, i) => {
+                    outletsTemplate[`${i}`] = {
+                        type: outletType,
+                        id: i.toString(10),
+                    }
+                }
+            )
+
+            build = () => {
+                let extraArgs: Partial<DspGraph.Node> = {}
+                if (entryParams.isEndSink) {
+                    extraArgs = { isEndSink: entryParams.isEndSink }
+                }
+                return {
+                    ...extraArgs,
+                    inlets: inletsTemplate,
+                    outlets: outletsTemplate,
+                }
+            }
+        }
+
+        nodeBuilders[nodeType] = {
+            build: entryParams.build || build,
+            translateArgs: entryParams.translateArgs || (() => ({})),
+            rerouteConnectionIn: entryParams.rerouteConnectionIn || undefined,
+        }
+    })
+    return nodeBuilders
 }

@@ -9,6 +9,8 @@
  *
  */
 
+import { DspGraph } from '@webpd/dsp-graph'
+
 export declare module PdJson {
     // Pd file
     type PdString = string
@@ -229,4 +231,31 @@ export declare module PdJson {
         type: 'cnv'
         layout?: CnvLayout
     }
+}
+
+// Patch translation PdJson -> DspGraph
+interface PartialNode {
+    inlets: DspGraph.Node['inlets']
+    outlets: DspGraph.Node['outlets']
+    isEndSink?: DspGraph.Node['isEndSink']
+}
+
+export interface NodeBuilder<NodeArgsType> {
+    translateArgs: (
+        objectArgs: PdJson.ObjectArgs,
+        patch: PdJson.Patch
+    ) => NodeArgsType
+    build: (nodeArgs: DspGraph.NodeArguments) => PartialNode
+
+    // Hook that allows to re-route a connection from the node to a different inlet.
+    // Useful for example for inlets in Pd that receive both signal and control,
+    // allows to split connections into pure signal and pure control connection instead.
+    rerouteConnectionIn?: (
+        outlet: DspGraph.Portlet,
+        inletId: DspGraph.PortletId
+    ) => DspGraph.PortletId | undefined
+}
+
+export interface NodeBuilders {
+    [nodeType: PdJson.ObjectType]: NodeBuilder<any>
 }
