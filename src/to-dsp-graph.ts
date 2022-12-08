@@ -27,11 +27,8 @@ export type ConversionData = {
     readonly nodeBuilders: NodeBuilders
 }
 
-export default (
-    pd: PdJson.Pd,
-    nodeBuilders: NodeBuilders
-): DspGraph.Graph => {
-    const conversion = {pd, nodeBuilders, graph: {}}
+export default (pd: PdJson.Pd, nodeBuilders: NodeBuilders): DspGraph.Graph => {
+    const conversion = { pd, nodeBuilders, graph: {} }
     buildGraph(conversion)
     flattenGraph(conversion)
     return conversion.graph
@@ -214,7 +211,10 @@ export const _fixConnection = (
     return connection
 }
 
-const _getNodeBuilder = (conversion: ConversionData, type: PdJson.ObjectType) => {
+const _getNodeBuilder = (
+    conversion: ConversionData,
+    type: PdJson.ObjectType
+) => {
     const nodeBuilder = conversion.nodeBuilders[type]
     if (!nodeBuilder) {
         throw new Error(`unknown node type ${type}`)
@@ -272,10 +272,7 @@ export const _inlineSubpatchInlets = (
     subpatch.inlets.forEach(
         (inletPdNodeId: PdJson.ObjectLocalId, index: number) => {
             const subpatchNodeInlet = index.toString(10)
-            const inletNodeId = buildGraphNodeId(
-                subpatch.id,
-                inletPdNodeId
-            )
+            const inletNodeId = buildGraphNodeId(subpatch.id, inletPdNodeId)
 
             // Sinks are nodes inside the subpatch which receive connections from the [inlet] object.
             const inletNode = getters.getNode(graph, inletNodeId)
@@ -314,10 +311,7 @@ export const _inlineSubpatchOutlets = (
     subpatch.outlets.forEach(
         (outletPdNodeId: PdJson.ObjectLocalId, index: number) => {
             const subpatchNodeOutlet = index.toString(10)
-            const outletNodeId = buildGraphNodeId(
-                subpatch.id,
-                outletPdNodeId
-            )
+            const outletNodeId = buildGraphNodeId(subpatch.id, outletPdNodeId)
 
             // Sources are nodes inside the subpatch which are connected to the [outlet] object.
             const outletNode = getters.getNode(graph, outletNodeId)
@@ -329,10 +323,7 @@ export const _inlineSubpatchOutlets = (
                         // outlet of the [pd subpatch] object.
                         const subpatchPdNode = getters.getNode(
                             graph,
-                            buildGraphNodeId(
-                                outerPatchId,
-                                subpatchPdNodeId
-                            )
+                            buildGraphNodeId(outerPatchId, subpatchPdNodeId)
                         )
                         const sinks = getters.getSinks(
                             subpatchPdNode,

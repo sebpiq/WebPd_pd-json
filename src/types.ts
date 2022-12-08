@@ -245,7 +245,7 @@ export interface NodeBuilder<NodeArgsType> {
         objectArgs: PdJson.ObjectArgs,
         patch: PdJson.Patch
     ) => NodeArgsType
-    build: (nodeArgs: DspGraph.NodeArguments) => PartialNode
+    build: (nodeArgs: NodeArgsType) => PartialNode
 
     // Hook that allows to re-route a connection from the node to a different inlet.
     // Useful for example for inlets in Pd that receive both signal and control,

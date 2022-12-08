@@ -9,9 +9,9 @@
  *
  */
 
-import { DspGraph } from "@webpd/dsp-graph"
-import { ConversionData } from "./to-dsp-graph"
-import { NodeBuilder, NodeBuilders, PdJson } from "./types"
+import { DspGraph } from '@webpd/dsp-graph'
+import { ConversionData } from './to-dsp-graph'
+import { NodeBuilder, NodeBuilders, PdJson } from './types'
 
 type ConcisePdConnection = [
     PdJson.ObjectLocalId,
@@ -92,9 +92,7 @@ export const setConversionDataGraph = (
     conversion: ConversionData,
     graph: DspGraph.Graph
 ) => {
-    Object.keys(conversion.graph).forEach(
-        (key) => delete conversion.graph[key]
-    )
+    Object.keys(conversion.graph).forEach((key) => delete conversion.graph[key])
     Object.keys(graph).forEach((key) => (conversion.graph[key] = graph[key]))
 }
 

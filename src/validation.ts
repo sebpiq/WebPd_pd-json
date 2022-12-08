@@ -10,7 +10,9 @@
  */
 
 export const assertNumber = (value: any) => {
-    if (typeof value !== 'number') { throw new ValidationError(`${value} is not a number`) }
+    if (typeof value !== 'number') {
+        throw new ValidationError(`${value} is not a number`)
+    }
     return value
 }
 

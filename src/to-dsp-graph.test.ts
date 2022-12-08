@@ -46,7 +46,6 @@ const DUMMY_NODE_BUILDERS = makeNodeBuilders({
 const DUMMY_NODE_TYPE = pdJsonNodeDefaults('').type
 
 describe('toDspGraph', () => {
-
     describe('default', () => {
         const NODE_BUILDERS: NodeBuilders = makeNodeBuilders({
             [DUMMY_NODE_TYPE]: {
@@ -132,10 +131,7 @@ describe('toDspGraph', () => {
 
     describe('buildMixerNodeId', () => {
         it('should build a correct id', () => {
-            assert.strictEqual(
-                buildMixerNodeId('node', '44'),
-                `mixer_node_44`
-            )
+            assert.strictEqual(buildMixerNodeId('node', '44'), `mixer_node_44`)
         })
     })
 
@@ -166,7 +162,7 @@ describe('toDspGraph', () => {
             const conversion: ConversionData = {
                 pd,
                 nodeBuilders: DUMMY_NODE_BUILDERS,
-                graph: {}
+                graph: {},
             }
 
             buildGraph(conversion)
@@ -290,7 +286,7 @@ describe('toDspGraph', () => {
                     },
                 },
             })
-            const conversion: ConversionData = {pd, nodeBuilders, graph: {}}
+            const conversion: ConversionData = { pd, nodeBuilders, graph: {} }
 
             buildGraph(conversion)
 
@@ -366,7 +362,7 @@ describe('toDspGraph', () => {
                     outletTypes: ['message'],
                 },
             })
-            const conversion: ConversionData = {pd, nodeBuilders, graph: {}}
+            const conversion: ConversionData = { pd, nodeBuilders, graph: {} }
 
             buildGraph(conversion)
 
@@ -404,7 +400,14 @@ describe('toDspGraph', () => {
 
         let CONVERSION: ConversionData
 
-        beforeEach(() => (CONVERSION = {pd: PD, nodeBuilders: NODE_BUILDERS, graph: {} }))
+        beforeEach(
+            () =>
+                (CONVERSION = {
+                    pd: PD,
+                    nodeBuilders: NODE_BUILDERS,
+                    graph: {},
+                })
+        )
 
         it('should fix incoming connections if the node builder defines rerouteConnectionIn and it returns a new connection', () => {
             const graph = makeGraph({
@@ -566,7 +569,11 @@ describe('toDspGraph', () => {
                         },
                     },
                 })
-                const conversion: ConversionData = {pd, nodeBuilders: NODE_BUILDERS, graph: {}}
+                const conversion: ConversionData = {
+                    pd,
+                    nodeBuilders: NODE_BUILDERS,
+                    graph: {},
+                }
 
                 buildGraph(conversion)
                 const referencesToSubpatch = getReferencesToSubpatch(pd, 'sp')
@@ -648,7 +655,11 @@ describe('toDspGraph', () => {
                         },
                     },
                 })
-                const conversion: ConversionData = {pd, nodeBuilders: NODE_BUILDERS, graph: {}}
+                const conversion: ConversionData = {
+                    pd,
+                    nodeBuilders: NODE_BUILDERS,
+                    graph: {},
+                }
 
                 buildGraph(conversion)
 
@@ -664,14 +675,8 @@ describe('toDspGraph', () => {
                 )
 
                 // outlet nodes should be deleted
-                assert.strictEqual(
-                    conversion.graph['pd_sp_outlet1'],
-                    undefined
-                )
-                assert.strictEqual(
-                    conversion.graph['pd_sp_outlet2'],
-                    undefined
-                )
+                assert.strictEqual(conversion.graph['pd_sp_outlet1'], undefined)
+                assert.strictEqual(conversion.graph['pd_sp_outlet2'], undefined)
 
                 const expectedGraph = makeGraph({
                     pd_sp_n1: {
@@ -741,7 +746,11 @@ describe('toDspGraph', () => {
                     },
                 })
 
-                const conversion: ConversionData = {pd, nodeBuilders: NODE_BUILDERS, graph: {}}
+                const conversion: ConversionData = {
+                    pd,
+                    nodeBuilders: NODE_BUILDERS,
+                    graph: {},
+                }
                 buildGraph(conversion)
                 _inlineSubpatch(conversion, pd.patches['sp'])
 
@@ -791,7 +800,11 @@ describe('toDspGraph', () => {
                         },
                     },
                 })
-                const conversion: ConversionData = {pd, nodeBuilders: NODE_BUILDERS, graph: {}}
+                const conversion: ConversionData = {
+                    pd,
+                    nodeBuilders: NODE_BUILDERS,
+                    graph: {},
+                }
 
                 buildGraph(conversion)
                 _inlineSubpatch(conversion, pd.patches['sp'])
@@ -858,7 +871,11 @@ describe('toDspGraph', () => {
                 },
             })
 
-            const conversion: ConversionData = {pd, nodeBuilders: NODE_BUILDERS, graph: {}}
+            const conversion: ConversionData = {
+                pd,
+                nodeBuilders: NODE_BUILDERS,
+                graph: {},
+            }
 
             buildGraph(conversion)
             flattenGraph(conversion)
@@ -938,7 +955,11 @@ describe('toDspGraph', () => {
                     },
                 },
             })
-            const conversion: ConversionData = {pd, nodeBuilders: NODE_BUILDERS, graph: {}}
+            const conversion: ConversionData = {
+                pd,
+                nodeBuilders: NODE_BUILDERS,
+                graph: {},
+            }
 
             buildGraph(conversion)
             flattenGraph(conversion)
