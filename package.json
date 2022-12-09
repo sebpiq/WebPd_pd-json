@@ -2,7 +2,7 @@
   "name": "@webpd/pd-json",
   "version": "0.1.0",
   "description": "Utilities for building and manipulating as DSP graph",
-  "main": "./dist/index.js",
+  "main": "./dist/WebPd_pd-json/index.js",
   "types": "./dist/types/index.d.ts",
   "type": "module",
   "scripts": {
