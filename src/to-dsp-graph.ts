@@ -117,7 +117,7 @@ const _buildGraphNode = (
 ): DspGraph.Node => {
     const graphNodeType = pdNode.type
     const nodeBuilder = _getNodeBuilder(conversion, pdNode.type)
-    const graphNodeArgs = nodeBuilder.translateArgs(pdNode.args, patch)
+    const graphNodeArgs = nodeBuilder.translateArgs(pdNode, patch)
     const graphPartialNode = nodeBuilder.build(graphNodeArgs)
     return mutation.addNode(conversion.graph, {
         id: nodeId,

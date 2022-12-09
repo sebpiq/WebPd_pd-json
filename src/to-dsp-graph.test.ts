@@ -268,8 +268,8 @@ describe('toDspGraph', () => {
                     outletTypes: ['signal', 'signal'],
                 },
                 [MIXER_NODE_TYPE]: {
-                    translateArgs: (objectArgs: PdJson.ObjectArgs) => ({
-                        channels: objectArgs[0],
+                    translateArgs: (pdNode) => ({
+                        channels: pdNode.args[0],
                     }),
                     build: (nodeArgs: DspGraph.NodeArguments) => {
                         const inlets: DspGraph.PortletMap = {}

@@ -242,7 +242,7 @@ interface PartialNode {
 
 export interface NodeBuilder<NodeArgsType> {
     translateArgs: (
-        objectArgs: PdJson.ObjectArgs,
+        pdNode: PdJson.Node,
         patch: PdJson.Patch
     ) => NodeArgsType
     build: (nodeArgs: NodeArgsType) => PartialNode
