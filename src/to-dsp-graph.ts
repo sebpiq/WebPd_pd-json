@@ -21,17 +21,17 @@ enum IdNamespaces {
     MIXER = 'mixer',
 }
 
-export type ConversionData = {
+export type Compilation = {
     readonly pd: PdJson.Pd
     readonly graph: DspGraph.Graph
     readonly nodeBuilders: NodeBuilders
 }
 
 export default (pd: PdJson.Pd, nodeBuilders: NodeBuilders): DspGraph.Graph => {
-    const conversion = { pd, nodeBuilders, graph: {} }
-    buildGraph(conversion)
-    flattenGraph(conversion)
-    return conversion.graph
+    const compilation: Compilation = { pd, nodeBuilders, graph: {} }
+    buildGraph(compilation)
+    flattenGraph(compilation)
+    return compilation.graph
 }
 
 export const buildGraphNodeId = (
@@ -49,11 +49,11 @@ export const buildMixerNodeId = (
 }
 
 // Given the base structure of a `pd` object, convert the explicit connections into our graph format.
-export const buildGraph = (conversion: ConversionData): void => {
-    Object.values(conversion.pd.patches).forEach((patch) => {
+export const buildGraph = (compilation: Compilation): void => {
+    Object.values(compilation.pd.patches).forEach((patch) => {
         Object.values(patch.nodes).forEach((pdNode) =>
             _buildGraphNode(
-                conversion,
+                compilation,
                 patch,
                 pdNode,
                 buildGraphNodeId(patch.id, pdNode.id)
@@ -85,7 +85,7 @@ export const buildGraph = (conversion: ConversionData): void => {
                 },
             ]
 
-            return _fixConnection(conversion, connection)
+            return _fixConnection(compilation, connection)
         })
 
         // In Pd, several signal sources are summed when connected to the same inlet.
@@ -100,7 +100,7 @@ export const buildGraph = (conversion: ConversionData): void => {
             )
 
             _buildGraphConnections(
-                conversion,
+                compilation,
                 patch,
                 connectionsToSink.map(([source]) => source),
                 sink
@@ -110,16 +110,16 @@ export const buildGraph = (conversion: ConversionData): void => {
 }
 
 const _buildGraphNode = (
-    conversion: ConversionData,
+    compilation: Compilation,
     patch: PdJson.Patch,
     pdNode: PdJson.Node,
     nodeId: DspGraph.NodeId
 ): DspGraph.Node => {
     const graphNodeType = pdNode.type
-    const nodeBuilder = _getNodeBuilder(conversion, pdNode.type)
+    const nodeBuilder = _getNodeBuilder(compilation, pdNode.type)
     const graphNodeArgs = nodeBuilder.translateArgs(pdNode, patch)
     const graphPartialNode = nodeBuilder.build(graphNodeArgs)
-    return mutation.addNode(conversion.graph, {
+    return mutation.addNode(compilation.graph, {
         id: nodeId,
         type: graphNodeType,
         args: graphNodeArgs,
@@ -130,12 +130,12 @@ const _buildGraphNode = (
 }
 
 const _buildGraphConnections = (
-    conversion: ConversionData,
+    compilation: Compilation,
     patch: PdJson.Patch,
     sources: Array<DspGraph.ConnectionEndpoint>,
     sink: DspGraph.ConnectionEndpoint
 ): void => {
-    const { graph } = conversion
+    const { graph } = compilation
     if (sources.length === 1) {
         mutation.connect(graph, sources[0], sink)
         return
@@ -143,7 +143,7 @@ const _buildGraphConnections = (
 
     // Create Mixer node according to sink type
     let mixerNode: DspGraph.Node
-    const sinkNode: DspGraph.Node = conversion.graph[sink.nodeId]
+    const sinkNode: DspGraph.Node = compilation.graph[sink.nodeId]
     const sinkType = sinkNode.inlets[sink.portletId].type
 
     // Pd implicitely sums multiple signals when they are connected to the same inlet.
@@ -151,7 +151,7 @@ const _buildGraphConnections = (
     if (sinkType === 'message') {
     } else if (sinkType === 'signal') {
         mixerNode = _buildGraphNode(
-            conversion,
+            compilation,
             patch,
             {
                 id: 'dummy',
@@ -192,13 +192,13 @@ const _buildGraphConnections = (
 }
 
 export const _fixConnection = (
-    conversion: ConversionData,
+    compilation: Compilation,
     connection: [DspGraph.ConnectionEndpoint, DspGraph.ConnectionEndpoint]
 ): [DspGraph.ConnectionEndpoint, DspGraph.ConnectionEndpoint] => {
     const [source, sink] = connection
-    const sinkNode = conversion.graph[sink.nodeId]
-    const pdSinkNodeBuilder = _getNodeBuilder(conversion, sinkNode.type)
-    const sourceNode = conversion.graph[source.nodeId]
+    const sinkNode = compilation.graph[sink.nodeId]
+    const pdSinkNodeBuilder = _getNodeBuilder(compilation, sinkNode.type)
+    const sourceNode = compilation.graph[source.nodeId]
     if (pdSinkNodeBuilder.rerouteConnectionIn) {
         const newInletId = pdSinkNodeBuilder.rerouteConnectionIn(
             sourceNode.outlets[source.portletId],
@@ -212,10 +212,10 @@ export const _fixConnection = (
 }
 
 const _getNodeBuilder = (
-    conversion: ConversionData,
+    compilation: Compilation,
     type: PdJson.ObjectType
 ) => {
-    const nodeBuilder = conversion.nodeBuilders[type]
+    const nodeBuilder = compilation.nodeBuilders[type]
     if (!nodeBuilder) {
         throw new Error(`unknown node type ${type}`)
     }
@@ -225,8 +225,8 @@ const _getNodeBuilder = (
 // Given a pd object, inline all the subpatches into the given `graph`, so that objects indirectly wired through
 // the [inlet] and [outlet] objects of a subpatch are instead directly wired into the same graph. Also, deletes
 // [pd subpatch], [inlet] and [outlet] nodes (tilde or not).
-export const flattenGraph = (conversion: ConversionData): void => {
-    const { pd } = conversion
+export const flattenGraph = (compilation: Compilation): void => {
+    const { pd } = compilation
     const patchesToInline = new Set<PdJson.ObjectGlobalId>(
         Object.keys(pd.patches)
     )
@@ -239,7 +239,7 @@ export const flattenGraph = (conversion: ConversionData): void => {
             if (hasDependencies) {
                 return
             }
-            _inlineSubpatch(conversion, subpatch)
+            _inlineSubpatch(compilation, subpatch)
             patchesToInline.delete(subpatch.id)
         })
     }
@@ -248,13 +248,13 @@ export const flattenGraph = (conversion: ConversionData): void => {
 // This inlines a subpatch in all the patches where it is defined.
 // !!! This works only on one level. If the subpatch contains other subpatches they won't be inlined
 export const _inlineSubpatch = (
-    conversion: ConversionData,
+    compilation: Compilation,
     subpatch: PdJson.Patch
 ): void => {
-    const { pd, graph } = conversion
+    const { pd, graph } = compilation
     const subpatchReferences = getReferencesToSubpatch(pd, subpatch.id)
-    _inlineSubpatchInlets(conversion, subpatch, subpatchReferences)
-    _inlineSubpatchOutlets(conversion, subpatch, subpatchReferences)
+    _inlineSubpatchInlets(compilation, subpatch, subpatchReferences)
+    _inlineSubpatchOutlets(compilation, subpatch, subpatchReferences)
     subpatchReferences.forEach(([outerPatchId, subpatchPdNodeId]) =>
         mutation.deleteNode(
             graph,
@@ -264,11 +264,11 @@ export const _inlineSubpatch = (
 }
 
 export const _inlineSubpatchInlets = (
-    conversion: ConversionData,
+    compilation: Compilation,
     subpatch: PdJson.Patch,
     referencesToSubpatch: ReferencesToSubpatch
 ): void => {
-    const { graph } = conversion
+    const { graph } = compilation
     subpatch.inlets.forEach(
         (inletPdNodeId: PdJson.ObjectLocalId, index: number) => {
             const subpatchNodeInlet = index.toString(10)
@@ -303,11 +303,11 @@ export const _inlineSubpatchInlets = (
 }
 
 export const _inlineSubpatchOutlets = (
-    conversion: ConversionData,
+    compilation: Compilation,
     subpatch: PdJson.Patch,
     referencesToSubpatch: ReferencesToSubpatch
 ): void => {
-    const { graph } = conversion
+    const { graph } = compilation
     subpatch.outlets.forEach(
         (outletPdNodeId: PdJson.ObjectLocalId, index: number) => {
             const subpatchNodeOutlet = index.toString(10)

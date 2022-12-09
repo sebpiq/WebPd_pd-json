@@ -10,7 +10,7 @@
  */
 
 import { DspGraph } from '@webpd/dsp-graph'
-import { ConversionData } from './to-dsp-graph'
+import { Compilation } from './to-dsp-graph'
 import { NodeBuilder, NodeBuilders, PdJson } from './types'
 
 type ConcisePdConnection = [
@@ -87,9 +87,9 @@ export const makePd = (concisePd: ConcisePd): PdJson.Pd => {
     return pd
 }
 
-// Necessary because `ConversionData.graph` is readonly
-export const setConversionDataGraph = (
-    conversion: ConversionData,
+// Necessary because `Compilation.graph` is readonly
+export const setCompilationGraph = (
+    conversion: Compilation,
     graph: DspGraph.Graph
 ) => {
     Object.keys(conversion.graph).forEach((key) => delete conversion.graph[key])

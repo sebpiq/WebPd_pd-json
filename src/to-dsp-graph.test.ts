@@ -17,7 +17,7 @@ import toDspGraph, {
     _inlineSubpatchOutlets,
     _inlineSubpatch,
     MIXER_NODE_TYPE,
-    ConversionData,
+    Compilation,
     _fixConnection,
     buildGraphNodeId,
     buildMixerNodeId,
@@ -31,7 +31,7 @@ import {
     pdJsonPatchDefaults,
     pdJsonNodeDefaults,
     makePd,
-    setConversionDataGraph,
+    setCompilationGraph,
     pdJsonDefaults,
 } from './test-helpers'
 import { getReferencesToSubpatch } from './pdjson-helpers'
@@ -159,7 +159,7 @@ describe('toDspGraph', () => {
                     },
                 },
             })
-            const conversion: ConversionData = {
+            const conversion: Compilation = {
                 pd,
                 nodeBuilders: DUMMY_NODE_BUILDERS,
                 graph: {},
@@ -286,7 +286,7 @@ describe('toDspGraph', () => {
                     },
                 },
             })
-            const conversion: ConversionData = { pd, nodeBuilders, graph: {} }
+            const conversion: Compilation = { pd, nodeBuilders, graph: {} }
 
             buildGraph(conversion)
 
@@ -362,7 +362,7 @@ describe('toDspGraph', () => {
                     outletTypes: ['message'],
                 },
             })
-            const conversion: ConversionData = { pd, nodeBuilders, graph: {} }
+            const conversion: Compilation = { pd, nodeBuilders, graph: {} }
 
             buildGraph(conversion)
 
@@ -398,7 +398,7 @@ describe('toDspGraph', () => {
 
         const PD = pdJsonDefaults()
 
-        let CONVERSION: ConversionData
+        let CONVERSION: Compilation
 
         beforeEach(
             () =>
@@ -422,7 +422,7 @@ describe('toDspGraph', () => {
                     type: 'someType',
                 },
             })
-            setConversionDataGraph(CONVERSION, graph)
+            setCompilationGraph(CONVERSION, graph)
 
             let fixedConnection = _fixConnection(CONVERSION, [
                 { nodeId: 'n1', portletId: '0' },
@@ -452,7 +452,7 @@ describe('toDspGraph', () => {
                     type: 'someType',
                 },
             })
-            setConversionDataGraph(CONVERSION, graph)
+            setCompilationGraph(CONVERSION, graph)
 
             const fixedConnection = _fixConnection(CONVERSION, [
                 { nodeId: 'n1', portletId: '1' },
@@ -473,7 +473,7 @@ describe('toDspGraph', () => {
                     type: 'typeWithoutReroute',
                 },
             })
-            setConversionDataGraph(CONVERSION, graph)
+            setCompilationGraph(CONVERSION, graph)
 
             const fixedConnection = _fixConnection(CONVERSION, [
                 { nodeId: 'n1', portletId: '1' },
@@ -569,7 +569,7 @@ describe('toDspGraph', () => {
                         },
                     },
                 })
-                const conversion: ConversionData = {
+                const conversion: Compilation = {
                     pd,
                     nodeBuilders: NODE_BUILDERS,
                     graph: {},
@@ -655,7 +655,7 @@ describe('toDspGraph', () => {
                         },
                     },
                 })
-                const conversion: ConversionData = {
+                const conversion: Compilation = {
                     pd,
                     nodeBuilders: NODE_BUILDERS,
                     graph: {},
@@ -746,7 +746,7 @@ describe('toDspGraph', () => {
                     },
                 })
 
-                const conversion: ConversionData = {
+                const conversion: Compilation = {
                     pd,
                     nodeBuilders: NODE_BUILDERS,
                     graph: {},
@@ -800,7 +800,7 @@ describe('toDspGraph', () => {
                         },
                     },
                 })
-                const conversion: ConversionData = {
+                const conversion: Compilation = {
                     pd,
                     nodeBuilders: NODE_BUILDERS,
                     graph: {},
@@ -871,7 +871,7 @@ describe('toDspGraph', () => {
                 },
             })
 
-            const conversion: ConversionData = {
+            const conversion: Compilation = {
                 pd,
                 nodeBuilders: NODE_BUILDERS,
                 graph: {},
@@ -955,7 +955,7 @@ describe('toDspGraph', () => {
                     },
                 },
             })
-            const conversion: ConversionData = {
+            const conversion: Compilation = {
                 pd,
                 nodeBuilders: NODE_BUILDERS,
                 graph: {},
