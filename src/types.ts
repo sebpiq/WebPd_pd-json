@@ -234,7 +234,7 @@ export declare module PdJson {
 }
 
 // Patch translation PdJson -> DspGraph
-interface PartialNode {
+export interface PartialNode {
     inlets: DspGraph.Node['inlets']
     outlets: DspGraph.Node['outlets']
     isEndSink?: DspGraph.Node['isEndSink']

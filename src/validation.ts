@@ -16,4 +16,8 @@ export const assertNumber = (value: any) => {
     return value
 }
 
+export const assertOptionalNumber = (value: any) => {
+    return value !== undefined ? assertNumber(value) : undefined
+}
+
 export class ValidationError extends Error {}
