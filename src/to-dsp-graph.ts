@@ -11,7 +11,6 @@
 
 import { mutation, getters, helpers, DspGraph } from '@webpd/dsp-graph'
 import { getReferencesToSubpatch, ReferencesToSubpatch } from './pdjson-helpers'
-import partition from 'lodash.partition'
 import { NodeBuilders, PdJson } from './types'
 
 export const MIXER_NODE_TYPE = 'mixer~'
@@ -93,11 +92,15 @@ export const buildGraph = (compilation: Compilation): void => {
         // all connections one by one, and need to batch all connections to the same sink.
         while (allConnections.length) {
             const [, sink] = allConnections[0]
-            let connectionsToSink: typeof allConnections
-            ;[connectionsToSink, allConnections] = partition(
-                allConnections,
-                ([, otherSink]) => helpers.endpointsEqual(sink, otherSink)
-            )
+            let connectionsToSink: typeof allConnections = []
+            allConnections = allConnections.filter(connection => {
+                const [, otherSink] = connection
+                if (helpers.endpointsEqual(sink, otherSink)) {
+                    connectionsToSink.push(connection)
+                    return false
+                }
+                return true
+            })
 
             _buildGraphConnections(
                 compilation,
