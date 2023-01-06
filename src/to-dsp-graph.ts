@@ -16,8 +16,8 @@ import { NodeBuilders, PdJson } from './types'
 export const MIXER_NODE_TYPE = 'mixer~'
 
 enum IdNamespaces {
-    PD = 'pd',
-    MIXER = 'mixer',
+    PD = 'n',
+    MIXER = 'm',
 }
 
 export type Compilation = {
@@ -37,14 +37,14 @@ export const buildGraphNodeId = (
     patchId: PdJson.ObjectGlobalId,
     nodeId: PdJson.ObjectLocalId
 ): DspGraph.NodeId => {
-    return `${IdNamespaces.PD}_${patchId}_${nodeId}`
+    return `${IdNamespaces.PD}${patchId}_${nodeId}`
 }
 
 export const buildMixerNodeId = (
     sinkId: DspGraph.NodeId,
     inletId: DspGraph.PortletId
 ): DspGraph.NodeId => {
-    return `${IdNamespaces.MIXER}_${sinkId}_${inletId}`
+    return `${IdNamespaces.MIXER}${sinkId}_${inletId}`
 }
 
 // Given the base structure of a `pd` object, convert the explicit connections into our graph format.

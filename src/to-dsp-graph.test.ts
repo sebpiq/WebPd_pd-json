@@ -104,15 +104,15 @@ describe('toDspGraph', () => {
             const graph = toDspGraph(pd, NODE_BUILDERS)
 
             const expectedGraph: DspGraph.Graph = makeGraph({
-                pd_p_n1: {
+                np_n1: {
                     ...EXPECTED_INLETS_OUTLETS,
-                    sinks: { '0': [['pd_sp_n1', '0']] },
+                    sinks: { '0': [['nsp_n1', '0']] },
                 },
-                pd_sp_n1: {
+                nsp_n1: {
                     ...EXPECTED_INLETS_OUTLETS,
-                    sinks: { '0': [['pd_p_n2', '0']] },
+                    sinks: { '0': [['np_n2', '0']] },
                 },
-                pd_p_n2: {
+                np_n2: {
                     ...EXPECTED_INLETS_OUTLETS,
                 },
             })
@@ -124,14 +124,14 @@ describe('toDspGraph', () => {
         it('should build a correct id', () => {
             assert.strictEqual(
                 buildGraphNodeId('patch', 'node'),
-                `pd_patch_node`
+                `npatch_node`
             )
         })
     })
 
     describe('buildMixerNodeId', () => {
         it('should build a correct id', () => {
-            assert.strictEqual(buildMixerNodeId('node', '44'), `mixer_node_44`)
+            assert.strictEqual(buildMixerNodeId('node', '44'), `mnode_44`)
         })
     })
 
@@ -168,13 +168,13 @@ describe('toDspGraph', () => {
             buildGraph(conversion)
 
             assert.deepStrictEqual(conversion.graph, {
-                pd_p1_n1: {
+                np1_n1: {
                     args: {},
-                    id: 'pd_p1_n1',
+                    id: 'np1_n1',
                     type: DUMMY_NODE_TYPE,
                     sources: {},
                     sinks: {
-                        0: [{ nodeId: 'pd_p1_n2', portletId: '0' }],
+                        0: [{ nodeId: 'np1_n2', portletId: '0' }],
                     },
                     inlets: {
                         '0': {
@@ -189,12 +189,12 @@ describe('toDspGraph', () => {
                         },
                     },
                 },
-                pd_p1_n2: {
+                np1_n2: {
                     args: {},
-                    id: 'pd_p1_n2',
+                    id: 'np1_n2',
                     type: DUMMY_NODE_TYPE,
                     sources: {
-                        0: [{ nodeId: 'pd_p1_n1', portletId: '0' }],
+                        0: [{ nodeId: 'np1_n1', portletId: '0' }],
                     },
                     sinks: {},
                     inlets: {
@@ -210,9 +210,9 @@ describe('toDspGraph', () => {
                         },
                     },
                 },
-                pd_p2_n1: {
+                np2_n1: {
                     args: {},
-                    id: 'pd_p2_n1',
+                    id: 'np2_n1',
                     type: DUMMY_NODE_TYPE,
                     sinks: {},
                     sources: {},
@@ -291,22 +291,22 @@ describe('toDspGraph', () => {
             buildGraph(conversion)
 
             assert.deepStrictEqual(Object.keys(conversion.graph).sort(), [
-                'mixer_pd_p_nodeSink_0',
-                'pd_p_nodeSink',
-                'pd_p_nodeSource1',
-                'pd_p_nodeSource2',
-                'pd_p_nodeSource3',
+                'mnp_nodeSink_0',
+                'np_nodeSink',
+                'np_nodeSource1',
+                'np_nodeSource2',
+                'np_nodeSource3',
             ])
-            assert.deepStrictEqual(conversion.graph['mixer_pd_p_nodeSink_0'], {
-                ...nodeDefaults('mixer_pd_p_nodeSink_0', MIXER_NODE_TYPE),
+            assert.deepStrictEqual(conversion.graph['mnp_nodeSink_0'], {
+                ...nodeDefaults('mnp_nodeSink_0', MIXER_NODE_TYPE),
                 args: { channels: 3 },
                 sources: {
-                    0: [{ nodeId: 'pd_p_nodeSource1', portletId: '0' }],
-                    1: [{ nodeId: 'pd_p_nodeSource2', portletId: '0' }],
-                    2: [{ nodeId: 'pd_p_nodeSource3', portletId: '0' }],
+                    0: [{ nodeId: 'np_nodeSource1', portletId: '0' }],
+                    1: [{ nodeId: 'np_nodeSource2', portletId: '0' }],
+                    2: [{ nodeId: 'np_nodeSource3', portletId: '0' }],
                 },
                 sinks: {
-                    0: [{ nodeId: 'pd_p_nodeSink', portletId: '0' }],
+                    0: [{ nodeId: 'np_nodeSink', portletId: '0' }],
                 },
                 inlets: {
                     '0': {
@@ -367,14 +367,14 @@ describe('toDspGraph', () => {
             buildGraph(conversion)
 
             assert.deepStrictEqual(Object.keys(conversion.graph).sort(), [
-                'pd_p_nodeSink',
-                'pd_p_nodeSource1',
-                'pd_p_nodeSource2',
+                'np_nodeSink',
+                'np_nodeSource1',
+                'np_nodeSource2',
             ])
-            assert.deepStrictEqual(conversion.graph['pd_p_nodeSink'].sources, {
+            assert.deepStrictEqual(conversion.graph['np_nodeSink'].sources, {
                 0: [
-                    { nodeId: 'pd_p_nodeSource1', portletId: '0' },
-                    { nodeId: 'pd_p_nodeSource2', portletId: '0' },
+                    { nodeId: 'np_nodeSource1', portletId: '0' },
+                    { nodeId: 'np_nodeSource2', portletId: '0' },
                 ],
             })
         })
@@ -588,30 +588,30 @@ describe('toDspGraph', () => {
                 assert.strictEqual(conversion.graph['sp:inlet2'], undefined)
 
                 const expectedGraph = makeGraph({
-                    pd_p_n1: {
+                    np_n1: {
                         ...EXPECTED_INLETS_OUTLETS,
                         sinks: {
                             0: [
-                                ['pd_p_sp', '0'],
-                                ['pd_p_sp', '1'],
-                                ['pd_sp_n1', '0'],
-                                ['pd_sp_n2', '3'],
+                                ['np_sp', '0'],
+                                ['np_sp', '1'],
+                                ['nsp_n1', '0'],
+                                ['nsp_n2', '3'],
                             ],
                         },
                     },
-                    pd_p_n2: {
+                    np_n2: {
                         ...EXPECTED_INLETS_OUTLETS,
                         sinks: {
                             0: [
-                                ['pd_p_sp', '0'],
-                                ['pd_sp_n1', '0'],
+                                ['np_sp', '0'],
+                                ['nsp_n1', '0'],
                             ],
                         },
                     },
                     // subpatch node is not deleted by _inlineSubpatchInlets
-                    pd_p_sp: { ...EXPECTED_INLETS_OUTLETS },
-                    pd_sp_n1: { ...EXPECTED_INLETS_OUTLETS },
-                    pd_sp_n2: { ...EXPECTED_INLETS_OUTLETS },
+                    np_sp: { ...EXPECTED_INLETS_OUTLETS },
+                    nsp_n1: { ...EXPECTED_INLETS_OUTLETS },
+                    nsp_n2: { ...EXPECTED_INLETS_OUTLETS },
                 })
 
                 assertGraphsEqual(conversion.graph, expectedGraph)
@@ -664,8 +664,8 @@ describe('toDspGraph', () => {
                 buildGraph(conversion)
 
                 // outlet nodes should be created
-                assert.strictEqual(!!conversion.graph['pd_sp_outlet1'], true)
-                assert.strictEqual(!!conversion.graph['pd_sp_outlet2'], true)
+                assert.strictEqual(!!conversion.graph['nsp_outlet1'], true)
+                assert.strictEqual(!!conversion.graph['nsp_outlet2'], true)
 
                 const referencesToSubpatch = getReferencesToSubpatch(pd, 'sp')
                 _inlineSubpatchOutlets(
@@ -675,34 +675,34 @@ describe('toDspGraph', () => {
                 )
 
                 // outlet nodes should be deleted
-                assert.strictEqual(conversion.graph['pd_sp_outlet1'], undefined)
-                assert.strictEqual(conversion.graph['pd_sp_outlet2'], undefined)
+                assert.strictEqual(conversion.graph['nsp_outlet1'], undefined)
+                assert.strictEqual(conversion.graph['nsp_outlet2'], undefined)
 
                 const expectedGraph = makeGraph({
-                    pd_sp_n1: {
+                    nsp_n1: {
                         ...EXPECTED_INLETS_OUTLETS,
                         sinks: {
                             3: [
-                                ['pd_p_n1', '0'],
-                                ['pd_p_n2', '1'],
-                                ['pd_p_n1', '1'],
+                                ['np_n1', '0'],
+                                ['np_n2', '1'],
+                                ['np_n1', '1'],
                             ],
                         },
                     },
-                    pd_sp_n2: {
+                    nsp_n2: {
                         ...EXPECTED_INLETS_OUTLETS,
-                        sinks: { 0: [['pd_p_n1', '1']] },
+                        sinks: { 0: [['np_n1', '1']] },
                     },
-                    pd_p_n1: { ...EXPECTED_INLETS_OUTLETS },
-                    pd_p_n2: { ...EXPECTED_INLETS_OUTLETS },
-                    pd_p_sp: {
+                    np_n1: { ...EXPECTED_INLETS_OUTLETS },
+                    np_n2: { ...EXPECTED_INLETS_OUTLETS },
+                    np_sp: {
                         ...EXPECTED_INLETS_OUTLETS,
                         sinks: {
                             0: [
-                                ['pd_p_n1', '0'],
-                                ['pd_p_n2', '1'],
+                                ['np_n1', '0'],
+                                ['np_n2', '1'],
                             ],
-                            1: [['pd_p_n1', '1']],
+                            1: [['np_n1', '1']],
                         },
                     },
                 })
@@ -755,19 +755,19 @@ describe('toDspGraph', () => {
                 _inlineSubpatch(conversion, pd.patches['sp'])
 
                 const expectedGraph: DspGraph.Graph = makeGraph({
-                    pd_p_n1: {
+                    np_n1: {
                         ...EXPECTED_INLETS_OUTLETS,
-                        sinks: { 2: [['pd_sp_n1', '1']] },
+                        sinks: { 2: [['nsp_n1', '1']] },
                     },
-                    pd_sp_n1: {
+                    nsp_n1: {
                         ...EXPECTED_INLETS_OUTLETS,
-                        sinks: { 3: [['pd_p_n2', '1']] },
+                        sinks: { 3: [['np_n2', '1']] },
                     },
-                    pd_p_n2: {
+                    np_n2: {
                         ...EXPECTED_INLETS_OUTLETS,
-                        sinks: { 0: [['pd_p_n3', '1']] },
+                        sinks: { 0: [['np_n3', '1']] },
                     },
-                    pd_p_n3: { ...EXPECTED_INLETS_OUTLETS },
+                    np_n3: { ...EXPECTED_INLETS_OUTLETS },
                 })
                 assertGraphsEqual(conversion.graph, expectedGraph)
             })
@@ -810,11 +810,11 @@ describe('toDspGraph', () => {
                 _inlineSubpatch(conversion, pd.patches['sp'])
 
                 const expectedGraph: DspGraph.Graph = makeGraph({
-                    pd_p_n1: {
+                    np_n1: {
                         ...EXPECTED_INLETS_OUTLETS,
-                        sinks: { 1: [['pd_p_n2', '1']] },
+                        sinks: { 1: [['np_n2', '1']] },
                     },
-                    pd_p_n2: { ...EXPECTED_INLETS_OUTLETS },
+                    np_n2: { ...EXPECTED_INLETS_OUTLETS },
                 })
                 assertGraphsEqual(conversion.graph, expectedGraph)
             })
@@ -881,14 +881,14 @@ describe('toDspGraph', () => {
             flattenGraph(conversion)
 
             const expectedGraph: DspGraph.Graph = makeGraph({
-                pd_p_n1: {
+                np_n1: {
                     ...EXPECTED_INLETS_OUTLETS,
-                    sinks: { 1: [['pd_ssp_n1', '1']] },
+                    sinks: { 1: [['nssp_n1', '1']] },
                 },
-                pd_p_n2: { ...EXPECTED_INLETS_OUTLETS },
-                pd_ssp_n1: {
+                np_n2: { ...EXPECTED_INLETS_OUTLETS },
+                nssp_n1: {
                     ...EXPECTED_INLETS_OUTLETS,
-                    sinks: { 2: [['pd_p_n2', '3']] },
+                    sinks: { 2: [['np_n2', '3']] },
                 },
             })
             assertGraphsEqual(conversion.graph, expectedGraph)
@@ -965,36 +965,36 @@ describe('toDspGraph', () => {
             flattenGraph(conversion)
 
             const expectedGraph: DspGraph.Graph = makeGraph({
-                pd_p_n1: {
+                np_n1: {
                     ...EXPECTED_INLETS_OUTLETS,
                     sinks: {
                         0: [
-                            ['pd_sp_n1', '0'],
-                            ['pd_sp_n2', '3'],
-                            ['pd_ssp_n1', '3'],
+                            ['nsp_n1', '0'],
+                            ['nsp_n2', '3'],
+                            ['nssp_n1', '3'],
                         ],
                     },
                 },
                 // Subpatch
-                pd_sp_n1: {
+                nsp_n1: {
                     ...EXPECTED_INLETS_OUTLETS,
                     sinks: {
                         1: [
-                            ['pd_p_n4', '0'],
-                            ['pd_p_n5', '0'],
+                            ['np_n4', '0'],
+                            ['np_n5', '0'],
                         ],
                     },
                 },
-                pd_sp_n2: {
+                nsp_n2: {
                     ...EXPECTED_INLETS_OUTLETS,
                     sinks: {},
                 },
                 // Sub-subpatch
-                pd_ssp_n1: { ...EXPECTED_INLETS_OUTLETS },
+                nssp_n1: { ...EXPECTED_INLETS_OUTLETS },
                 // Sub-subpatch : END
                 // Subpatch : END
-                pd_p_n4: { ...EXPECTED_INLETS_OUTLETS },
-                pd_p_n5: { ...EXPECTED_INLETS_OUTLETS },
+                np_n4: { ...EXPECTED_INLETS_OUTLETS },
+                np_n5: { ...EXPECTED_INLETS_OUTLETS },
             })
 
             assertGraphsEqual(conversion.graph, expectedGraph)

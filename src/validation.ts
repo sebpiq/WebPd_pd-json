@@ -16,7 +16,7 @@ export const assertNumber = (value: any) => {
     return value
 }
 
-export const assertOptionalNumber = (value: any) => {
+export const assertOptionalNumber = (value: any): number | undefined => {
     return value !== undefined ? assertNumber(value) : undefined
 }
 
