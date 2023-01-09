@@ -31,7 +31,8 @@ type ConciseNodeBuilders = {
     [nodeType: string]: {
         inletTypes?: Array<DspGraph.PortletType>
         outletTypes?: Array<DspGraph.PortletType>
-        isEndSink?: boolean
+        isSignalSink?: boolean
+        isMessageSource?: boolean
         translateArgs?: NodeBuilder<any>['translateArgs']
         rerouteConnectionIn?: NodeBuilder<any>['rerouteConnectionIn']
         build?: NodeBuilder<any>['build']
@@ -129,8 +130,11 @@ export const makeNodeBuilders = (
 
             build = () => {
                 let extraArgs: Partial<DspGraph.Node> = {}
-                if (entryParams.isEndSink) {
-                    extraArgs = { isEndSink: entryParams.isEndSink }
+                if (entryParams.isSignalSink) {
+                    extraArgs = { ...extraArgs, isSignalSink: entryParams.isSignalSink }
+                }
+                if (entryParams.isMessageSource) {
+                    extraArgs = { ...extraArgs, isMessageSource: entryParams.isMessageSource }
                 }
                 return {
                     ...extraArgs,

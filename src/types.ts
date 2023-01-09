@@ -237,7 +237,8 @@ export declare module PdJson {
 export interface PartialNode {
     inlets: DspGraph.Node['inlets']
     outlets: DspGraph.Node['outlets']
-    isEndSink?: DspGraph.Node['isEndSink']
+    isSignalSink?: DspGraph.Node['isSignalSink']
+    isMessageSource?: DspGraph.Node['isMessageSource']
 }
 
 export interface NodeBuilder<NodeArgsType> {
