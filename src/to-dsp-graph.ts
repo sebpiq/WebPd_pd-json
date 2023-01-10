@@ -93,7 +93,7 @@ export const buildGraph = (compilation: Compilation): void => {
         while (allConnections.length) {
             const [, sink] = allConnections[0]
             let connectionsToSink: typeof allConnections = []
-            allConnections = allConnections.filter(connection => {
+            allConnections = allConnections.filter((connection) => {
                 const [, otherSink] = connection
                 if (helpers.endpointsEqual(sink, otherSink)) {
                     connectionsToSink.push(connection)
@@ -214,10 +214,7 @@ export const _fixConnection = (
     return connection
 }
 
-const _getNodeBuilder = (
-    compilation: Compilation,
-    type: PdJson.ObjectType
-) => {
+const _getNodeBuilder = (compilation: Compilation, type: PdJson.ObjectType) => {
     const nodeBuilder = compilation.nodeBuilders[type]
     if (!nodeBuilder) {
         throw new Error(`unknown node type ${type}`)

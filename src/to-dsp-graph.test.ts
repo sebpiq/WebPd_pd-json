@@ -122,10 +122,7 @@ describe('toDspGraph', () => {
 
     describe('buildGraphNodeId', () => {
         it('should build a correct id', () => {
-            assert.strictEqual(
-                buildGraphNodeId('patch', 'node'),
-                `npatch_node`
-            )
+            assert.strictEqual(buildGraphNodeId('patch', 'node'), `npatch_node`)
         })
     })
 

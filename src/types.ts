@@ -242,10 +242,7 @@ export interface PartialNode {
 }
 
 export interface NodeBuilder<NodeArgsType> {
-    translateArgs: (
-        pdNode: PdJson.Node,
-        patch: PdJson.Patch
-    ) => NodeArgsType
+    translateArgs: (pdNode: PdJson.Node, patch: PdJson.Patch) => NodeArgsType
     build: (nodeArgs: NodeArgsType) => PartialNode
 
     // Hook that allows to re-route a connection from the node to a different inlet.

@@ -131,10 +131,16 @@ export const makeNodeBuilders = (
             build = () => {
                 let extraArgs: Partial<DspGraph.Node> = {}
                 if (entryParams.isSignalSink) {
-                    extraArgs = { ...extraArgs, isSignalSink: entryParams.isSignalSink }
+                    extraArgs = {
+                        ...extraArgs,
+                        isSignalSink: entryParams.isSignalSink,
+                    }
                 }
                 if (entryParams.isMessageSource) {
-                    extraArgs = { ...extraArgs, isMessageSource: entryParams.isMessageSource }
+                    extraArgs = {
+                        ...extraArgs,
+                        isMessageSource: entryParams.isMessageSource,
+                    }
                 }
                 return {
                     ...extraArgs,

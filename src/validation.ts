@@ -16,8 +16,19 @@ export const assertNumber = (value: any) => {
     return value
 }
 
+export const assertString = (value: any) => {
+    if (typeof value !== 'string') {
+        throw new ValidationError(`${value} is not a string`)
+    }
+    return value
+}
+
 export const assertOptionalNumber = (value: any): number | undefined => {
     return value !== undefined ? assertNumber(value) : undefined
+}
+
+export const assertOptionalString = (value: any): string | undefined => {
+    return value !== undefined ? assertString(value) : undefined
 }
 
 export class ValidationError extends Error {}

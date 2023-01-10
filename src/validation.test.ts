@@ -9,19 +9,34 @@
  *
  */
 
-import assert from "assert"
-import { assertNumber, assertOptionalNumber } from "./validation"
+import assert from 'assert'
+import {
+    assertNumber,
+    assertOptionalNumber,
+    assertOptionalString,
+    assertString,
+} from './validation'
 
 describe('validation', () => {
-
     describe('assertNumber', () => {
         it('should return a number if input is a number', () => {
             assert.strictEqual(assertNumber(12), 12)
         })
 
-        it('should return throw if input is not a number', () => {
+        it('should throw if input is not a number', () => {
             assert.throws(() => assertNumber('12'))
             assert.throws(() => assertNumber(undefined))
+        })
+    })
+
+    describe('assertString', () => {
+        it('should return a string if input is a string', () => {
+            assert.strictEqual(assertString('coucou'), 'coucou')
+        })
+
+        it('should throw if input is not a string', () => {
+            assert.throws(() => assertString(12))
+            assert.throws(() => assertString(undefined))
         })
     })
 
@@ -30,12 +45,26 @@ describe('validation', () => {
             assert.strictEqual(assertOptionalNumber(12), 12)
         })
 
-        it('should return throw if input is not a number nor undefined', () => {
+        it('should throw if input is not a number nor undefined', () => {
             assert.throws(() => assertOptionalNumber('12'))
         })
 
         it('should return undefined if input is undefined', () => {
             assert.strictEqual(assertOptionalNumber(undefined), undefined)
+        })
+    })
+
+    describe('assertOptionalString', () => {
+        it('should return a string if input is a string', () => {
+            assert.strictEqual(assertOptionalString('coucou'), 'coucou')
+        })
+
+        it('should throw if input is not a string nor undefined', () => {
+            assert.throws(() => assertOptionalString(12))
+        })
+
+        it('should return undefined if input is undefined', () => {
+            assert.strictEqual(assertOptionalString(undefined), undefined)
         })
     })
 })
